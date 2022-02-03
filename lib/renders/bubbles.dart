@@ -11,6 +11,7 @@ typedef BubbleCallback = void Function(Bubble);
 /// {@template bubble}
 ///A bubble class for spawning bubbles using a BubblePainter
 /// {@endtemplate}
+// ignore: must_be_immutable
 class Bubble extends Equatable {
   /// {@macro bubble}
   Bubble({
@@ -67,7 +68,7 @@ class Bubble extends Equatable {
   Offset direction;
 
   ///Determines if the bubbles should bounce in its container or exit
-  var canExitContainer = false;
+  bool canExitContainer = false;
 
   ///Moves bubble to its next position for the next frame
   void _moveBubble(Size boundary) {
@@ -95,15 +96,15 @@ class Bubble extends Equatable {
       if (opacity <= 0) {
         onDie?.call(this);
       } else {
-        paint.color = paint.color.withOpacity((opacity - 0.025).clamp(0, 1));
+        paint.color = paint.color.withOpacity((opacity - 0.03).clamp(0, 1));
       }
     } else if (opacity < 0.4) {
-      paint.color = paint.color.withOpacity((opacity + 0.035).clamp(0, 1));
+      paint.color = paint.color.withOpacity((opacity + 0.02).clamp(0, 1));
     }
   }
 
   @override
-  List<Object?> get props => [radius, position, direction, timer, paint];
+  List<Object?> get props => [radius, timer, paint];
 }
 
 /// {@template bubble_painter}

@@ -41,16 +41,14 @@ class PuzzleView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
 
-    /// Shuffle only if the current theme is Simple.
-    final shufflePuzzle = true; //theme is SimpleTheme;
-
     return Scaffold(
       backgroundColor: theme.backgroundColor,
       body: BlocProvider(
         create: (context) => TimerBloc(ticker: const Ticker()),
         child: BlocProvider(
-          create: (context) => PuzzleBloc(4)
-            ..add(PuzzleInitialized(shufflePuzzle: shufflePuzzle)),
+          ///TODO(Eric): this is where the dimension is set
+          create: (context) => PuzzleBloc(3)
+            ..add(const PuzzleInitialized(shufflePuzzle: true)),
           child: const _Puzzle(key: Key('puzzle_view_puzzle')),
         ),
       ),
@@ -213,7 +211,6 @@ class PuzzleBoard extends StatelessWidget {
 
     final size = puzzle.getDimension();
     if (size == 0) return const CircularProgressIndicator();
-
     return BlocListener<PuzzleBloc, PuzzleState>(
       listener: (context, state) {
         if (theme.hasTimer && state.puzzleStatus == PuzzleStatus.complete) {
@@ -224,7 +221,7 @@ class PuzzleBoard extends StatelessWidget {
         size,
         puzzle.tiles
             .map(
-              (tile) => PuzzleTileTops(
+              (tile) => PuzzleTileBody(
                 key: Key('puzzle_tile_${tile.value.toString()}'),
                 tile: tile,
               ),
@@ -235,10 +232,14 @@ class PuzzleBoard extends StatelessWidget {
   }
 }
 
-class PuzzleTileTops extends StatelessWidget {
-  const PuzzleTileTops({Key? key, required this.tile}) : super(key: key);
+///{@template puzzle_tile_top}
+///The widget to display over each 3D tile
+///{@endtemplate}
+class PuzzleTileBody extends StatelessWidget {
+  ///{@macro puzzle_tile_top}
+  const PuzzleTileBody({Key? key, required this.tile}) : super(key: key);
 
-  /// The tile to be displayed.
+  /// The tile data to be displayed.
   final Tile tile;
 
   @override

@@ -15,7 +15,7 @@ class AdvancedTheme extends PuzzleTheme {
   String get name => 'Advanced';
 
   @override
-  bool get hasTimer => false;
+  bool get hasTimer => true;
 
   @override
   bool get hasCountdown => false;
@@ -27,7 +27,7 @@ class AdvancedTheme extends PuzzleTheme {
   Color get defaultColor => PuzzleColors.primary5;
 
   @override
-  Color get hoverColor => PuzzleColors.primary3;
+  Color get hoverColor => PuzzleColors.primary3.withOpacity(0.6);
 
   @override
   Color get pressedColor => PuzzleColors.primary7;

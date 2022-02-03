@@ -8,12 +8,13 @@ enum TileMovementStatus { nothingTapped, cannotBeMoved, moved }
 
 class PuzzleState extends Equatable {
   const PuzzleState({
-    this.puzzle = const Puzzle(tiles: []),
+    this.puzzle = const Puzzle(tiles: [], tileType: PuzzleTileType.images),
     this.puzzleStatus = PuzzleStatus.incomplete,
     this.tileMovementStatus = TileMovementStatus.nothingTapped,
     this.numberOfCorrectTiles = 0,
     this.numberOfMoves = 0,
     this.lastTappedTile,
+    this.hoveredTile,
   });
 
   /// [Puzzle] containing the current tile arrangement.
@@ -30,6 +31,11 @@ class PuzzleState extends Equatable {
   /// The value is `null` if the user has not interacted with
   /// the puzzle yet.
   final Tile? lastTappedTile;
+
+  /// Represents the tile being hovered on.
+  ///
+  /// The value is `null` if the user is not hovering on any tile.
+  final Tile? hoveredTile;
 
   /// Number of tiles currently in their correct position.
   final int numberOfCorrectTiles;
@@ -51,6 +57,7 @@ class PuzzleState extends Equatable {
     int? numberOfCorrectTiles,
     int? numberOfMoves,
     Tile? lastTappedTile,
+    Tile? hoveredTile,
   }) {
     return PuzzleState(
       puzzle: puzzle ?? this.puzzle,
@@ -59,6 +66,7 @@ class PuzzleState extends Equatable {
       numberOfCorrectTiles: numberOfCorrectTiles ?? this.numberOfCorrectTiles,
       numberOfMoves: numberOfMoves ?? this.numberOfMoves,
       lastTappedTile: lastTappedTile ?? this.lastTappedTile,
+      hoveredTile: hoveredTile,
     );
   }
 
@@ -70,5 +78,6 @@ class PuzzleState extends Equatable {
         numberOfCorrectTiles,
         numberOfMoves,
         lastTappedTile,
+        hoveredTile,
       ];
 }

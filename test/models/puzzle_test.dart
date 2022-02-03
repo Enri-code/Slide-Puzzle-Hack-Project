@@ -60,9 +60,11 @@ void main() {
       unsolvable3x3Tile7,
       unsolvable3x3Tile8,
     ],
+    tileType: PuzzleTileType.numbers,
   );
 
   const solvable3x3Puzzle = Puzzle(
+    tileType: PuzzleTileType.numbers,
     tiles: [
       Tile(
         value: 2,
@@ -114,6 +116,7 @@ void main() {
   );
 
   const unsolvable4x4Puzzle = Puzzle(
+    tileType: PuzzleTileType.numbers,
     tiles: [
       Tile(
         value: 1,
@@ -221,6 +224,7 @@ void main() {
     currentPosition: Position(x: 1, y: 2),
   );
   const solvable2x2Puzzle = Puzzle(
+    tileType: PuzzleTileType.numbers,
     tiles: [
       solvable2x2Tile0,
       solvable2x2Tile1,
@@ -236,9 +240,13 @@ void main() {
         correctPosition: Position(x: 1, y: 1),
         currentPosition: Position(x: 1, y: 1),
       );
-      const puzzleEmpty = Puzzle(tiles: []);
-      const puzzle1x1 = Puzzle(tiles: [tile]);
-      const puzzle2x2 = Puzzle(tiles: [tile, tile, tile, tile]);
+      const puzzleEmpty = Puzzle(
+        tiles: [],
+        tileType: PuzzleTileType.numbers,
+      );
+      const puzzle1x1 = Puzzle(tileType: PuzzleTileType.numbers, tiles: [tile]);
+      const puzzle2x2 = Puzzle(
+          tileType: PuzzleTileType.numbers, tiles: [tile, tile, tile, tile]);
 
       test('returns 0 when given an empty list', () {
         expect(puzzleEmpty.getDimension(), equals(0));
@@ -262,6 +270,7 @@ void main() {
     group('getNumberOfCorrectTiles', () {
       test('returns 0 from 1x1 puzzle with only a whitespace tile', () {
         const puzzle = Puzzle(
+          tileType: PuzzleTileType.numbers,
           tiles: [
             Tile(
               value: 0,
@@ -334,9 +343,11 @@ void main() {
       test(
           'moves one tile that is adjacent to the whitespace to the '
           'position of the whitespace tile', () {
-        final mutableSolvable2x2Puzzle =
-            Puzzle(tiles: [...solvable2x2Puzzle.tiles]);
+        final mutableSolvable2x2Puzzle = Puzzle(
+            tileType: PuzzleTileType.numbers,
+            tiles: [...solvable2x2Puzzle.tiles]);
         final newPuzzle = Puzzle(
+          tileType: PuzzleTileType.numbers,
           tiles: [
             solvable2x2Tile0.copyWith(
               currentPosition: solvable2x2Tile3.currentPosition,
@@ -357,9 +368,11 @@ void main() {
       test(
           'moves multiple tiles that are in the same row/column as the '
           'whitespace tile', () {
-        final mutableUnsolvable3x3Puzzle =
-            Puzzle(tiles: [...unsolvable3x3Puzzle.tiles]);
+        final mutableUnsolvable3x3Puzzle = Puzzle(
+            tileType: PuzzleTileType.numbers,
+            tiles: [...unsolvable3x3Puzzle.tiles]);
         final newPuzzle = Puzzle(
+          tileType: PuzzleTileType.numbers,
           tiles: [
             unsolvable3x3Tile0.copyWith(
               currentPosition: unsolvable3x3Tile3.currentPosition,
@@ -388,6 +401,7 @@ void main() {
     group('sort', () {
       test('returns a puzzle with tiles sorted by their current positions', () {
         const sortedPuzzle = Puzzle(
+          tileType: PuzzleTileType.numbers,
           tiles: [
             solvable2x2Tile0,
             solvable2x2Tile1,

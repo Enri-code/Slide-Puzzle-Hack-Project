@@ -57,7 +57,7 @@ void main() {
   );
 
   final puzzleSize3Unshuffled = Puzzle(
-    tiles: [
+    tileType: PuzzleTileType.numbers, tiles:[
       size3Tile1.copyWith(currentPosition: size3Tile1.correctPosition),
       size3Tile2.copyWith(currentPosition: size3Tile2.correctPosition),
       size3Tile3.copyWith(currentPosition: size3Tile3.correctPosition),
@@ -71,7 +71,7 @@ void main() {
   );
 
   final puzzleSize3 = Puzzle(
-    tiles: [
+    tileType: PuzzleTileType.numbers, tiles:[
       size3Tile2,
       size3Tile4,
       size3Tile9,
@@ -189,7 +189,7 @@ void main() {
         whitespaceTile,
         bottomRightTile,
       ];
-      final puzzle = Puzzle(tiles: tiles);
+      final puzzle = Puzzle(tileType: PuzzleTileType.numbers, tiles: tiles);
 
       blocTest<PuzzleBloc, PuzzleState>(
         'emits [moved] when one tile was able to move',
@@ -202,7 +202,7 @@ void main() {
         expect: () => <PuzzleState>[
           PuzzleState(
             puzzle: Puzzle(
-              tiles: [
+              tileType: PuzzleTileType.numbers, tiles:[
                 topLeftTile,
                 topCenterTile,
                 topRightTile,
@@ -242,7 +242,7 @@ void main() {
         expect: () => <PuzzleState>[
           PuzzleState(
             puzzle: Puzzle(
-              tiles: [
+              tileType: PuzzleTileType.numbers, tiles:[
                 topLeftTile,
                 Tile(
                   value: 0,
@@ -321,7 +321,7 @@ void main() {
         expect: () => [
           PuzzleState(
             puzzle: Puzzle(
-              tiles: [
+              tileType: PuzzleTileType.numbers, tiles:[
                 topLeftTile,
                 topCenterTile,
                 topRightTile,
@@ -356,7 +356,7 @@ void main() {
       final random = Random(seed);
 
       final initialSize3Puzzle = Puzzle(
-        tiles: [
+        tileType: PuzzleTileType.numbers, tiles:[
           Tile(
             value: 1,
             correctPosition: Position(x: 1, y: 1),

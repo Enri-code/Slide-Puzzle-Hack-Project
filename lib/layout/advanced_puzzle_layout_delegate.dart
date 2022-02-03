@@ -1,7 +1,9 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:zflutter/zflutter.dart';
 
 import 'package:slide_puzzle/colors/colors.dart';
 import 'package:slide_puzzle/l10n/l10n.dart';
@@ -10,6 +12,8 @@ import 'package:slide_puzzle/models/models.dart';
 import 'package:slide_puzzle/puzzle/puzzle.dart';
 import 'package:slide_puzzle/renders/tile.dart';
 import 'package:slide_puzzle/theme/theme.dart';
+import 'package:slide_puzzle/typography/typography.dart';
+import 'package:zflutter/zflutter.dart';
 
 /// {@template advanced_puzzle_layout_delegate}
 /// A delegate for computing the layout of the puzzle UI
@@ -91,7 +95,7 @@ class AdvancedPuzzleLayoutDelegate extends PuzzleLayoutDelegate {
   }
 
   @override
-  Widget boardBuilder(int size, List<PuzzleTileTops> tiles) {
+  Widget boardBuilder(int size, List<PuzzleTileBody> tiles) {
     return Column(
       children: [
         const ResponsiveGap(small: 32, medium: 48, large: 96),
@@ -101,7 +105,7 @@ class AdvancedPuzzleLayoutDelegate extends PuzzleLayoutDelegate {
             child: AdvancedPuzzleBoard(
               key: const Key('advanced_puzzle_board_small'),
               size: size,
-              tileCovers: tiles,
+              tileBodies: tiles,
             ),
           ),
           medium: (_, __) => SizedBox.square(
@@ -109,7 +113,7 @@ class AdvancedPuzzleLayoutDelegate extends PuzzleLayoutDelegate {
             child: AdvancedPuzzleBoard(
               key: const Key('advanced_puzzle_board_medium'),
               size: size,
-              tileCovers: tiles,
+              tileBodies: tiles,
             ),
           ),
           large: (_, __) => SizedBox.square(
@@ -117,7 +121,7 @@ class AdvancedPuzzleLayoutDelegate extends PuzzleLayoutDelegate {
             child: AdvancedPuzzleBoard(
               key: const Key('advanced_puzzle_board_large'),
               size: size,
-              tileCovers: tiles,
+              tileBodies: tiles,
             ),
           ),
         ),
@@ -128,10 +132,25 @@ class AdvancedPuzzleLayoutDelegate extends PuzzleLayoutDelegate {
 
   @override
   Widget tileBuilder(Tile tile, PuzzleState state) {
-    return AdvancedPuzzleTile(
-      key: Key('advanced_puzzle_tile_${tile.value}_small'),
-      tile: tile,
-      state: state,
+    return ResponsiveLayoutBuilder(
+      small: (_, __) => AdvancedPuzzleTile(
+        key: Key('advanced_puzzle_tile_${tile.value}_small'),
+        tile: tile,
+        tileFontSize: _TileFontSize.small,
+        puzzleState: state,
+      ),
+      medium: (_, __) => AdvancedPuzzleTile(
+        key: Key('advanced_puzzle_tile_${tile.value}_medium'),
+        tile: tile,
+        tileFontSize: _TileFontSize.medium,
+        puzzleState: state,
+      ),
+      large: (_, __) => AdvancedPuzzleTile(
+        key: Key('advanced_puzzle_tile_${tile.value}_large'),
+        tile: tile,
+        tileFontSize: _TileFontSize.large,
+        puzzleState: state,
+      ),
     );
   }
 
@@ -164,6 +183,9 @@ class AdvancedStartSection extends StatelessWidget {
           numberOfMoves: state.numberOfMoves,
           numberOfTilesLeft: state.numberOfTilesLeft,
         ),
+        const ResponsiveGap(large: 32),
+
+        // TODO(Eric): place timer here
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
@@ -207,7 +229,7 @@ abstract class _BoardSize {
 
 /// {@template advanced_puzzle_board}
 /// Display the board of the puzzle in a [size]x[size] layout
-/// filled with [tileCovers].
+/// filled with [tileBodies].
 /// {@endtemplate}
 @visibleForTesting
 class AdvancedPuzzleBoard extends StatelessWidget {
@@ -215,17 +237,20 @@ class AdvancedPuzzleBoard extends StatelessWidget {
   const AdvancedPuzzleBoard({
     Key? key,
     required this.size,
-    required this.tileCovers,
+    required this.tileBodies,
   }) : super(key: key);
 
   /// The size of the board.
   final int size;
 
-  /// The tops of the tiles to be displayed on the board.
-  final List<PuzzleTileTops> tileCovers;
+  /// The widgets to be displayed in front of the tiles on the board.
+  final List<PuzzleTileBody> tileBodies;
 
   @override
   Widget build(BuildContext context) {
+    final tileType =
+        context.select((PuzzleBloc bloc) => bloc.state.puzzle.tileType);
+
     return LayoutBuilder(
       builder: (_, constraints) {
         final _tileSize = constraints.biggest.shortestSide / size;
@@ -237,10 +262,10 @@ class AdvancedPuzzleBoard extends StatelessWidget {
           fit: StackFit.expand,
           alignment: AlignmentDirectional.center,
           children: [
-            const _BubblePainter(),
+            if (tileType != PuzzleTileType.images) const _BubblePainter(),
             ZIllustration(
               children: [
-                for (var tileWidget in tileCovers)
+                for (var tileWidget in tileBodies)
                   if (!tileWidget.tile.isWhitespace)
                     ZPositioned.translate(
                       x: _tileOffset(tileWidget.tile.currentPosition.x),
@@ -250,13 +275,13 @@ class AdvancedPuzzleBoard extends StatelessWidget {
               ],
             ),
             Transform(
-              transform: Matrix4.rotationX(0.2),
+              transform: Matrix4.rotationX(0.19),
               child: GridView.count(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: size,
-                children: tileCovers,
+                children: tileBodies,
               ),
             ),
           ],
@@ -299,39 +324,107 @@ class __BubblePainterState extends State<_BubblePainter>
   }
 }
 
+abstract class _TileFontSize {
+  static double small = 36;
+  static double medium = 50;
+  static double large = 54;
+}
+
 /// {@template advanced_puzzle_tile}
 /// Displays the puzzle tile associated with [tile]
 /// {@endtemplate}
 @visibleForTesting
 class AdvancedPuzzleTile extends StatelessWidget {
   /// {@macro advanced_puzzle_tile}
-  const AdvancedPuzzleTile(
-      {Key? key, required this.tile, this.tileTop, required this.state})
-      : super(key: key);
+  const AdvancedPuzzleTile({
+    Key? key,
+    required this.tile,
+    required this.tileFontSize,
+    required this.puzzleState,
+  }) : super(key: key);
 
   /// The tile to be displayed.
   final Tile tile;
 
-  /// The top of the tile to be displayed.
-  final Widget? tileTop;
+  /// The font size of the tile to be displayed.
+  final double tileFontSize;
 
   /// The state of the puzzle.
-  final PuzzleState state;
+  final PuzzleState puzzleState;
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
+
     return Stack(
+      fit: StackFit.expand,
       children: [
-        Material(
-          type: MaterialType.transparency,
-          child: InkResponse(
-            highlightShape: BoxShape.rectangle,
-            onTap: state.puzzleStatus == PuzzleStatus.incomplete
-                ? () => context.read<PuzzleBloc>().add(TileTapped(tile))
-                : null,
+        InkResponse(
+          highlightShape: BoxShape.rectangle,
+          onHover: (val) {
+            context
+                .read<PuzzleBloc>()
+                .add(TileHovered(entered: val, tile: tile));
+          },
+          onTap: puzzleState.puzzleStatus == PuzzleStatus.incomplete
+              ? () {
+                  context.read<PuzzleBloc>().add(TileTapped(tile));
+                }
+              : null,
+        ),
+        IgnorePointer(
+          child: BlocSelector<PuzzleBloc, PuzzleState, bool>(
+            selector: (state) => state.lastTappedTile?.value == tile.value,
+            builder: (context, isTappedTile) =>
+                BlocSelector<PuzzleBloc, PuzzleState, bool>(
+              selector: (state) => state.hoveredTile?.value == tile.value,
+              builder: (context, isHoveredTile) {
+                final size = puzzleState.puzzle.getDimension();
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    () {
+                      if (puzzleState.puzzle.tileType ==
+                          PuzzleTileType.images) {
+                        const _path = 'images/tiles_';
+                        return SvgPicture.asset(
+                          '$_path${size}x$size/${tile.value}.svg',
+                          color: isHoveredTile ? theme.hoverColor : null,
+                          colorBlendMode: BlendMode.color,
+                          placeholderBuilder: (_) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            tile.value.toString(),
+                            style: PuzzleTextStyle.headline2.copyWith(
+                              fontSize: tileFontSize,
+                              color: isHoveredTile
+                                  ? PuzzleColors.grey1
+                                  : PuzzleColors.white,
+                            ),
+                          ),
+                        );
+                      }
+                    }(),
+                    if (isTappedTile)
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 2,
+                            color: theme.pressedColor,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
-        if (tileTop != null) tileTop!,
       ],
     );
   }

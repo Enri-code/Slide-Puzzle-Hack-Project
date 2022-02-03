@@ -8,9 +8,11 @@ import 'package:slide_puzzle/typography/typography.dart';
 /// {@endtemplate}
 class PuzzleTitle extends StatelessWidget {
   /// {@macro puzzle_title}
-  const PuzzleTitle(
-      {Key? key, required this.title, this.color = PuzzleColors.primary1})
-      : super(key: key);
+  const PuzzleTitle({
+    Key? key,
+    required this.title,
+    this.color = PuzzleColors.primary1,
+  }) : super(key: key);
 
   /// The title to be displayed.
   final String title;

@@ -5,11 +5,9 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-import 'package:flutter/material.dart';
 import 'package:slide_puzzle/app/app.dart';
 import 'package:slide_puzzle/bootstrap.dart';
 
 void main() {
-  runApp(const App());
-  //bootstrap(() => const App());
+  bootstrap(() => const App());
 }

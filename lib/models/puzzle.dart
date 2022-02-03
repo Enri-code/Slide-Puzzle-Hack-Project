@@ -28,12 +28,27 @@ import 'package:slide_puzzle/models/models.dart';
 // puzzle. As seen from example above, tile 2's correct position is (2, 1).
 // The current position is where the tile is currently located on the board.
 
+///The type of puzzle visual layout
+enum PuzzleTileType {
+  /// Shows a number on each tile
+  numbers,
+
+  /// Shows fragments of an image in each tile
+  images,
+}
+
 /// {@template puzzle}
 /// Model for a puzzle.
 /// {@endtemplate}
 class Puzzle extends Equatable {
   /// {@macro puzzle}
-  const Puzzle({required this.tiles});
+  const Puzzle({this.countdown, required this.tileType, required this.tiles});
+
+  ///The type of tiles to be displayed
+  final PuzzleTileType tileType;
+
+  /// A duration that will countdown in the game if not null
+  final Duration? countdown;
 
   /// List of [Tile]s representing the puzzle's current arrangement.
   final List<Tile> tiles;
@@ -179,7 +194,7 @@ class Puzzle extends Equatable {
       );
     }
 
-    return Puzzle(tiles: tiles);
+    return Puzzle(tiles: tiles, tileType: tileType);
   }
 
   /// Sorts puzzle tiles so they are in order of their current position.
@@ -188,9 +203,9 @@ class Puzzle extends Equatable {
       ..sort((tileA, tileB) {
         return tileA.currentPosition.compareTo(tileB.currentPosition);
       });
-    return Puzzle(tiles: sortedTiles);
+    return Puzzle(tiles: sortedTiles, tileType: tileType);
   }
 
   @override
-  List<Object> get props => [tiles];
+  List<Object> get props => [tiles, tileType];
 }

@@ -27,6 +27,16 @@ class TileTapped extends PuzzleEvent {
   List<Object> get props => [tile];
 }
 
+class TileHovered extends PuzzleEvent {
+  const TileHovered({required this.entered, required this.tile});
+
+  final bool entered;
+  final Tile tile;
+
+  @override
+  List<Object> get props => [tile, entered];
+}
+
 class PuzzleReset extends PuzzleEvent {
   const PuzzleReset();
 }

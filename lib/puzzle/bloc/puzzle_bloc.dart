@@ -13,6 +13,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
   PuzzleBloc(this._size, {this.random}) : super(const PuzzleState()) {
     on<PuzzleInitialized>(_onPuzzleInitialized);
     on<TileTapped>(_onTileTapped);
+    on<TileHovered>(_onTileHovered);
     on<PuzzleReset>(_onPuzzleReset);
   }
 
@@ -33,12 +34,23 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     );
   }
 
-  ///TODO where tile tap algorithm is
+  void _onTileHovered(TileHovered event, Emitter<PuzzleState> emit) {
+    if (event.entered) {
+      emit(state.copyWith(hoveredTile: event.tile));
+    } else {
+      emit(state);
+    }
+  }
+
+  // TODO(Eric): where tile tap algorithm is
   void _onTileTapped(TileTapped event, Emitter<PuzzleState> emit) {
     final tappedTile = event.tile;
     if (state.puzzleStatus == PuzzleStatus.incomplete) {
       if (state.puzzle.isTileMovable(tappedTile)) {
-        final mutablePuzzle = Puzzle(tiles: [...state.puzzle.tiles]);
+        final mutablePuzzle = Puzzle(
+          tiles: [...state.puzzle.tiles],
+          tileType: state.puzzle.tileType,
+        );
         final puzzle = mutablePuzzle.moveTiles(tappedTile, []);
         if (puzzle.isComplete()) {
           emit(
@@ -84,7 +96,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
     );
   }
 
-/// Build a randomized, solvable puzzle of the given size.
+  /// Build a randomized, solvable puzzle of the given size.
   Puzzle _generatePuzzle(int size, {bool shuffle = true}) {
     final correctPositions = <Position>[];
     final currentPositions = <Position>[];
@@ -115,7 +127,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
       currentPositions,
     );
 
-    var puzzle = Puzzle(tiles: tiles);
+    var puzzle = Puzzle(tiles: tiles, tileType: PuzzleTileType.images);
 
     if (shuffle) {
       // Assign the tiles new current positions until the puzzle is solvable and
@@ -127,7 +139,7 @@ class PuzzleBloc extends Bloc<PuzzleEvent, PuzzleState> {
           correctPositions,
           currentPositions,
         );
-        puzzle = Puzzle(tiles: tiles);
+        puzzle = Puzzle(tiles: tiles, tileType: PuzzleTileType.images);
       }
     }
 
