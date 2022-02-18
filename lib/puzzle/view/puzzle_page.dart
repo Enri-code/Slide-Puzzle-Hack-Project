@@ -46,7 +46,7 @@ class PuzzleView extends StatelessWidget {
       body: BlocProvider(
         create: (context) => TimerBloc(ticker: const Ticker()),
         child: BlocProvider(
-          ///TODO(Eric): this is where the dimension is set
+          // TODO(Eric): this is where the dimension is set
           create: (context) => PuzzleBloc(3)
             ..add(const PuzzleInitialized(shufflePuzzle: true)),
           child: const _Puzzle(key: Key('puzzle_view_puzzle')),

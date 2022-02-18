@@ -18,7 +18,6 @@ class Tile3D extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final theme = context.select((ThemeBloc bloc) => bloc.state.theme);
     return ZPositioned.rotate(
       x: 0.19,
       child: ZGroup(
@@ -29,8 +28,8 @@ class Tile3D extends StatelessWidget {
               width: size,
               height: size,
               depth: _thickness,
-              color: Colors.green.withOpacity(0.1),
-              bottomColor: Colors.green[900]?.withOpacity(0.1),
+              color: PuzzleColors.primary6.withOpacity(0.2),
+              bottomColor: PuzzleColors.primary3.withOpacity(0.3),
             ),
           ),
           ZPositioned.translate(
@@ -40,8 +39,8 @@ class Tile3D extends StatelessWidget {
               width: size,
               height: size,
               depth: _thickness,
-              color: Colors.orange.withOpacity(0.1),
-              bottomColor: Colors.orange[900]?.withOpacity(0.1),
+              color: PuzzleColors.primary4.withOpacity(0.25),
+              bottomColor: PuzzleColors.primary1.withOpacity(0.3),
             ),
           ),
           ZPositioned.translate(
@@ -50,8 +49,8 @@ class Tile3D extends StatelessWidget {
               width: size,
               height: size,
               depth: _thickness,
-              color: PuzzleColors.primary6.withOpacity(0.1),
-              bottomColor: PuzzleColors.primary3.withOpacity(0.1),
+              color: PuzzleColors.primary6.withOpacity(0.2),
+              bottomColor: PuzzleColors.primary3.withOpacity(0.3),
             ),
           ),
         ],

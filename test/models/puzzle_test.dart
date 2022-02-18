@@ -246,7 +246,9 @@ void main() {
       );
       const puzzle1x1 = Puzzle(tileType: PuzzleTileType.numbers, tiles: [tile]);
       const puzzle2x2 = Puzzle(
-          tileType: PuzzleTileType.numbers, tiles: [tile, tile, tile, tile]);
+        tileType: PuzzleTileType.numbers,
+        tiles: [tile, tile, tile, tile],
+      );
 
       test('returns 0 when given an empty list', () {
         expect(puzzleEmpty.getDimension(), equals(0));
@@ -344,8 +346,9 @@ void main() {
           'moves one tile that is adjacent to the whitespace to the '
           'position of the whitespace tile', () {
         final mutableSolvable2x2Puzzle = Puzzle(
-            tileType: PuzzleTileType.numbers,
-            tiles: [...solvable2x2Puzzle.tiles]);
+          tileType: PuzzleTileType.numbers,
+          tiles: [...solvable2x2Puzzle.tiles],
+        );
         final newPuzzle = Puzzle(
           tileType: PuzzleTileType.numbers,
           tiles: [
@@ -369,8 +372,9 @@ void main() {
           'moves multiple tiles that are in the same row/column as the '
           'whitespace tile', () {
         final mutableUnsolvable3x3Puzzle = Puzzle(
-            tileType: PuzzleTileType.numbers,
-            tiles: [...unsolvable3x3Puzzle.tiles]);
+          tileType: PuzzleTileType.numbers,
+          tiles: [...unsolvable3x3Puzzle.tiles],
+        );
         final newPuzzle = Puzzle(
           tileType: PuzzleTileType.numbers,
           tiles: [

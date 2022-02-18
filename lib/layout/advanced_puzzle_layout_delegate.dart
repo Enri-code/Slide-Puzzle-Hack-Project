@@ -185,7 +185,7 @@ class AdvancedStartSection extends StatelessWidget {
         ),
         const ResponsiveGap(large: 32),
 
-        // TODO(Eric): place timer here
+        // TODO(Eric): place timer widget here
         const ResponsiveGap(large: 32),
         ResponsiveLayoutBuilder(
           small: (_, __) => const SizedBox(),
@@ -237,11 +237,15 @@ class AdvancedPuzzleBoard extends StatelessWidget {
   const AdvancedPuzzleBoard({
     Key? key,
     required this.size,
+    this.padding = 16,
     required this.tileBodies,
   }) : super(key: key);
 
   /// The size of the board.
   final int size;
+
+  /// The padding between each tile
+  final double padding;
 
   /// The widgets to be displayed in front of the tiles on the board.
   final List<PuzzleTileBody> tileBodies;
@@ -253,15 +257,27 @@ class AdvancedPuzzleBoard extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (_, constraints) {
-        final _tileSize = constraints.biggest.shortestSide / size;
+        final boardSize = constraints.biggest.shortestSide;
+        final tileSize = boardSize / size - padding * (size - 1) / size;
 
-        double _tileOffset(int currPos) =>
-            _tileSize * (currPos - 0.5 - 0.5 * size);
+        /// [tileSize * currPos] arranges it in order but this starts from
+        /// the center of the widget so it has to be offset to the negative by
+        /// half board size and to the positive half of tile size
+        /// so it can be centered.
+        /// [(currPos - 1) * tileSize - boardSize * 0.5 + tileSize * 0.5]
+        /// it is then simplified to
+
+        double _tileOffset(int currPos) {
+          return tileSize * (currPos - 0.5) -
+              boardSize * 0.5 +
+              padding * (currPos - 1);
+        }
 
         return Stack(
           fit: StackFit.expand,
           alignment: AlignmentDirectional.center,
           children: [
+            Container(decoration: BoxDecoration(border: Border.all())),
             if (tileType != PuzzleTileType.images) const _BubblePainter(),
             ZIllustration(
               children: [
@@ -270,17 +286,17 @@ class AdvancedPuzzleBoard extends StatelessWidget {
                     ZPositioned.translate(
                       x: _tileOffset(tileWidget.tile.currentPosition.x),
                       y: _tileOffset(tileWidget.tile.currentPosition.y),
-                      child: Tile3D(size: _tileSize),
+                      child: Tile3D(size: tileSize),
                     ),
               ],
             ),
             Transform(
               transform: Matrix4.rotationX(0.19),
               child: GridView.count(
-                padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: size,
+                padding: EdgeInsets.all(padding),
+                physics: const NeverScrollableScrollPhysics(),
                 children: tileBodies,
               ),
             ),
@@ -391,10 +407,9 @@ class AdvancedPuzzleTile extends StatelessWidget {
                           '$_path${size}x$size/${tile.value}.svg',
                           color: isHoveredTile ? theme.hoverColor : null,
                           colorBlendMode: BlendMode.color,
-                          placeholderBuilder: (_) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          },
+                          placeholderBuilder: (_) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         );
                       } else {
                         return Center(
@@ -414,7 +429,7 @@ class AdvancedPuzzleTile extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            width: 2,
+                            width: 2.5,
                             color: theme.pressedColor,
                           ),
                         ),

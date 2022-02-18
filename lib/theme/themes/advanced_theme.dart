@@ -30,7 +30,7 @@ class AdvancedTheme extends PuzzleTheme {
   Color get hoverColor => PuzzleColors.primary3.withOpacity(0.6);
 
   @override
-  Color get pressedColor => PuzzleColors.primary7;
+  Color get pressedColor => PuzzleColors.primary5;
 
   @override
   PuzzleLayoutDelegate get layoutDelegate =>
